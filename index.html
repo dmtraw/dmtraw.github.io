@@ -122,7 +122,9 @@
   document.getElementById('y').textContent = new Date().getFullYear();
 
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
+  // пароль помним только до закрытия вкладки (sessionStorage), при новом заходе спросим снова
+  try { localStorage.removeItem('pf_pass'); } catch(e){}
+  const store = { get(k){ try { return sessionStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { sessionStorage.setItem(k,v); } catch(e){} }, del(k){ try { sessionStorage.removeItem(k); } catch(e){} } };
 
   // ---- расшифровка (PBKDF2 + AES-GCM) ----
   let KEY = null, LIST = [];
