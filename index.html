@@ -63,6 +63,8 @@
 
   .modal { position:fixed; inset:0; background:rgba(255,255,255,.86); -webkit-backdrop-filter:blur(24px) saturate(1.4); backdrop-filter:blur(24px) saturate(1.4); display:flex; visibility:hidden; opacity:0; align-items:center; justify-content:center; flex-direction:column; gap:18px; padding:48px 16px 16px; z-index:10; transition:opacity .35s var(--ease), visibility 0s .35s; }
   .modal:not(.open) { pointer-events:none; }
+  body.viewing main { visibility:hidden; }
+  body.viewing { background:#fff; }
   .modal.open { visibility:visible; opacity:1; transition:opacity .35s var(--ease); }
   .shell { border-radius:26px; box-shadow:0 2px 6px rgba(0,0,0,.05), 0 30px 80px -20px rgba(0,0,0,.28); transform:scale(.97) translateY(8px); transition:transform .5s var(--ease); }
   .modal.open .shell { transform:none; }
@@ -196,6 +198,7 @@
     modal.classList.add('open', 'loading');
     fit();
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('viewing');
     if (location.hash !== '#' + p.slug) { history.pushState({p: p.slug}, '', '#' + p.slug); pushed = true; }
     if (!blobs[p.id]) blobs[p.id] = new TextDecoder().decode(await decrypt('vault/' + p.id + '.bin'));
     if (current === p && modal.classList.contains('open')) { player.srcdoc = blobs[p.id]; modal.classList.remove('loading'); }
@@ -209,6 +212,7 @@
     modal.classList.remove('open', 'loading');
     setTimeout(() => { if (!modal.classList.contains('open')) player.removeAttribute('srcdoc'); }, 350);
     document.body.style.overflow = '';
+    setTimeout(() => { if (!modal.classList.contains('open')) document.body.classList.remove('viewing'); }, 200);
   }
   document.getElementById('close').onclick = () => hide();
   document.getElementById('back').onclick = () => hide();
